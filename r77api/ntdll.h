@@ -808,5 +808,6 @@ typedef FARPROC(WINAPI *NT_GETPROCADDRESS)(HMODULE module, LPCSTR function);
 typedef LPVOID(WINAPI *NT_VIRTUALALLOC)(LPVOID address, SIZE_T size, DWORD allocationType, DWORD protect);
 typedef BOOL(WINAPI *NT_VIRTUALPROTECT)(LPVOID address, SIZE_T size, DWORD newProtect, PDWORD oldProtect);
 typedef BOOL(WINAPI *NT_DLLMAIN)(HINSTANCE module, DWORD reason, LPVOID reserved);
+typedef BOOL(WINAPI *NT_SETWINDOWDISPLAYAFFINITY)(HWND hWnd, DWORD dwAffinity);
 
 #endif

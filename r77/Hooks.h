@@ -39,6 +39,7 @@ static NTSTATUS NTAPI HookedNtDeviceIoControlFile(HANDLE fileHandle, HANDLE even
 static PDH_STATUS WINAPI HookedPdhGetRawCounterArrayW(PDH_HCOUNTER counter, LPDWORD bufferSize, LPDWORD itemCount, PNT_PDH_RAW_COUNTER_ITEM_W itemBuffer);
 static PDH_STATUS WINAPI HookedPdhGetFormattedCounterArrayW(PDH_HCOUNTER counter, DWORD format, LPDWORD bufferSize, LPDWORD itemCount, PNT_PDH_FMT_COUNTERVALUE_ITEM_W itemBuffer);
 static HRESULT WINAPI HookedAmsiScanBuffer(LPVOID amsiContext, LPVOID buffer, ULONG length, LPCWSTR contentName, LPVOID amsiSession, LPDWORD result);
+static BOOL WINAPI HookedSetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity);
 
 static DWORD WINAPI WriteChildProcessPipeThread(LPVOID parameter);
 static BOOL GetProcessHiddenTimes(PLARGE_INTEGER hiddenKernelTime, PLARGE_INTEGER hiddenUserTime, PLONGLONG hiddenCycleTime);

