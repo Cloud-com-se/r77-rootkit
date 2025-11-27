@@ -14,6 +14,10 @@
 #define DEVICE_NSI						L"\\Device\\Nsi"
 #define IOCTL_NSI_GETALLPARAM			0x12001b
 
+#define WDA_NONE						0x00
+#define WDA_MONITOR						0x01
+#define WDA_EXCLUDEFROMCAPTURE			0x11
+
 typedef LONG PDH_STATUS;
 typedef HANDLE PDH_HCOUNTER;
 

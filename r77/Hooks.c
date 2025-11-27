@@ -860,7 +860,7 @@ static BOOL WINAPI HookedSetWindowDisplayAffinity(HWND hWnd, DWORD dwAffinity)
 	// WDA_EXCLUDEFROMCAPTURE (0x11) and WDA_MONITOR (0x01) prevent screen capture.
 	// By blocking these calls, the window becomes capturable.
 
-	if (dwAffinity == 0x11 || dwAffinity == 0x01)
+	if (dwAffinity == WDA_EXCLUDEFROMCAPTURE || dwAffinity == WDA_MONITOR)
 	{
 		// Return TRUE to simulate success, but don't actually set the affinity.
 		return TRUE;
