@@ -20,3 +20,4 @@ $Build/
 Install/Resources/
 Stager/Resources/
 Uninstall/Resources/
+_codeql_detected_source_root
